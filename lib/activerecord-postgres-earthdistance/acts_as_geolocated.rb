@@ -88,9 +88,19 @@ module ActiveRecordPostgresEarthdistance
         if relation.select_values.empty? && include_default_columns
           values << relation.arel_table[Arel.star]
         end
-        values << Utils.earth_distance(self, lat, lng, name)
+        values << Utils.earth_distance(through_table_klass, lat, lng, name)
 
         relation.select_values = values
+      end
+    end
+
+    private
+
+    def through_table_klass
+      if through_table.present?
+        reflections[through_table.to_s].klass
+      else
+        self
       end
     end
   end
